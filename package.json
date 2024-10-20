@@ -1,0 +1,21 @@
+{
+  "name": "h3-framework",
+  "version": "1.4.0",
+  "main": "dist/index.js",
+  "scripts": {
+    "build": "npm run clean && tsc",
+    "clean": "rimraf dist"
+  },
+  "type": "module",
+  "author": "",
+  "license": "ISC",
+  "description": "",
+  "dependencies": {
+    "h3": "^1.13.0",
+    "reflect-metadata": "^0.2.2",
+    "rimraf": "^6.0.1"
+  },
+  "devDependencies": {
+    "@types/node": "^22.7.5"
+  }
+}
