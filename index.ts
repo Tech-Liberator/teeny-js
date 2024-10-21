@@ -17,7 +17,7 @@ export {
   Multipart,
 } from "./decorator.js";
 
-export { Headers, ResponseEntity } from "./types.js";
+export { Headers, ResponseEntity, Response } from "./types.js";
 
 export {
   getRequestHost,

@@ -10,6 +10,7 @@ import {
   readFormData,
   readMultipartFormData,
   RequestHeaders,
+  setResponseHeaders,
   setResponseStatus,
 } from "h3";
 import { existsSync, readdirSync } from "fs";
@@ -18,15 +19,13 @@ import { pathToFileURL } from "url";
 import "reflect-metadata";
 import { createResponse, defaultMessages, isResponseEntity } from "./utils.js";
 import { HttpStatus } from "./enums.js";
+import { Response } from "./types.js";
 
 export function generateRoutes(app: any) {
   const router = createRouter();
   const apiDirectory = join(process.cwd(), "dist", "src", "controller");
 
-  console.log(`Generating routes from ${apiDirectory}`);
-
   if (!existsSync(apiDirectory)) {
-    console.warn(`Controller directory not found: ${apiDirectory}`);
     return;
   }
 
@@ -78,11 +77,19 @@ export function generateRoutes(app: any) {
                   headers
                 );
                 const result = await method.apply(apiClass, args);
-
                 // Check if the result is already a ResponseEntity, return it directly if true
                 if (isResponseEntity(result)) {
+                  if (result.headers) {
+                    setResponseHeaders(event, result.headers);
+                  }
                   setResponseStatus(event, result.status, result.message);
-                  return result;
+                  // Strip away the `headers` property for the `Response` type
+                  const response: Response = {
+                    status: result.status,
+                    message: result.message,
+                    body: result.body,
+                  };
+                  return response;
                 }
 
                 // Handle empty result or null value (No Content)

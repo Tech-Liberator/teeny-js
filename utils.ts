@@ -1,5 +1,5 @@
 import { HttpStatus } from "./enums.js";
-import { Headers, ResponseEntity } from "./types.js";
+import { Headers, Response, ResponseEntity } from "./types.js";
 
 export function getRequestHost(headers: Headers) {
   return headers["X-Forwarded-Host"] || headers["x-forwarded-host"];
@@ -83,7 +83,7 @@ export const defaultMessages: { [key: number]: string } = {
 
 
 export function createResponse<T>(statusCode: number, message: string, data: T) {
-  return new ResponseEntity(statusCode, message, data);
+  return new Response(statusCode, message, data);
 }
 
 export function isResponseEntity(result: any): result is ResponseEntity {
