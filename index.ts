@@ -17,15 +17,14 @@ export {
   Multipart,
 } from "./decorator.js";
 
-export { Headers, ResponseEntity, Response } from "./types.js";
+export { Headers, Response } from "./types.js";
 
 export {
   getRequestHost,
   getRequestIP,
   getRequestProtocol,
   getRequestURL,
-  createResponse,
-  isResponseEntity,
+  isResponse,
   defaultMessages,
 } from "./utils.js";
 

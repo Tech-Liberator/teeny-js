@@ -17,7 +17,7 @@ import { existsSync, readdirSync } from "fs";
 import { join, extname } from "path";
 import { pathToFileURL } from "url";
 import "reflect-metadata";
-import { createResponse, defaultMessages, isResponseEntity } from "./utils.js";
+import { defaultMessages, isResponse } from "./utils.js";
 import { HttpStatus } from "./enums.js";
 import { Response } from "./types.js";
 
@@ -77,19 +77,27 @@ export function generateRoutes(app: any) {
                   headers
                 );
                 const result = await method.apply(apiClass, args);
+                console.log("result", result);
                 // Check if the result is already a ResponseEntity, return it directly if true
-                if (isResponseEntity(result)) {
-                  if (result.headers) {
-                    setResponseHeaders(event, result.headers);
+                if (isResponse(result)) {
+                  console.log("is a response");
+                  const response: Response = result;
+                  const headers: Record<string, string> = response.headers;
+                  if (headers) {
+                    setResponseHeaders(event, headers);
                   }
-                  setResponseStatus(event, result.status, result.message);
-                  // Strip away the `headers` property for the `Response` type
-                  const response: Response = {
-                    status: result.status,
-                    message: result.message,
-                    body: result.body,
-                  };
-                  return response;
+                  const status: HttpStatus = response.status;
+                  const message: string = response.message;
+                  if (message) {
+                    setResponseStatus(event, status, message);
+                  } else {
+                    setResponseStatus(
+                      event,
+                      status,
+                      defaultMessages[status]
+                    );
+                  }
+                  return response.body;
                 }
 
                 // Handle empty result or null value (No Content)
@@ -99,22 +107,14 @@ export function generateRoutes(app: any) {
                     HttpStatus.OK,
                     defaultMessages[HttpStatus.OK]
                   );
-                  return createResponse(
-                    HttpStatus.OK,
-                    defaultMessages[HttpStatus.OK],
-                    result
-                  );
+                  return result.body;
                 } else {
                   setResponseStatus(
                     event,
                     HttpStatus.NO_CONTENT,
                     defaultMessages[HttpStatus.NO_CONTENT]
                   );
-                  return createResponse(
-                    HttpStatus.NO_CONTENT,
-                    defaultMessages[HttpStatus.NO_CONTENT],
-                    null
-                  );
+                  return result.body;
                 }
               } catch (error: any) {
                 setResponseStatus(
@@ -123,12 +123,7 @@ export function generateRoutes(app: any) {
                   error.message ||
                     defaultMessages[HttpStatus.INTERNAL_SERVER_ERROR]
                 );
-                return createResponse(
-                  HttpStatus.INTERNAL_SERVER_ERROR,
-                  error.message ||
-                    defaultMessages[HttpStatus.INTERNAL_SERVER_ERROR],
-                  null
-                );
+                return error;
               }
             };
 

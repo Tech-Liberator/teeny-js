@@ -1,5 +1,5 @@
 import { HttpStatus } from "./enums.js";
-import { Headers, Response, ResponseEntity } from "./types.js";
+import { Headers, Response } from "./types.js";
 
 export function getRequestHost(headers: Headers) {
   return headers["X-Forwarded-Host"] || headers["x-forwarded-host"];
@@ -66,7 +66,8 @@ export const defaultMessages: { [key: number]: string } = {
   [HttpStatus.UPGRADE_REQUIRED]: "Upgrade Required",
   [HttpStatus.PRECONDITION_REQUIRED]: "Precondition Required",
   [HttpStatus.TOO_MANY_REQUESTS]: "Too Many Requests",
-  [HttpStatus.REQUEST_HEADER_FIELDS_TOO_LARGE]: "Request Header Fields Too Large",
+  [HttpStatus.REQUEST_HEADER_FIELDS_TOO_LARGE]:
+    "Request Header Fields Too Large",
   [HttpStatus.UNAVAILABLE_FOR_LEGAL_REASONS]: "Unavailable For Legal Reasons",
   [HttpStatus.INTERNAL_SERVER_ERROR]: "Internal Server Error",
   [HttpStatus.NOT_IMPLEMENTED]: "Not Implemented",
@@ -78,14 +79,10 @@ export const defaultMessages: { [key: number]: string } = {
   [HttpStatus.INSUFFICIENT_STORAGE]: "Insufficient Storage",
   [HttpStatus.LOOP_DETECTED]: "Loop Detected",
   [HttpStatus.NOT_EXTENDED]: "Not Extended",
-  [HttpStatus.NETWORK_AUTHENTICATION_REQUIRED]: "Network Authentication Required",
+  [HttpStatus.NETWORK_AUTHENTICATION_REQUIRED]:
+    "Network Authentication Required",
 };
 
-
-export function createResponse<T>(statusCode: number, message: string, data: T) {
-  return new Response(statusCode, message, data);
-}
-
-export function isResponseEntity(result: any): result is ResponseEntity {
-  return result instanceof ResponseEntity;
+export function isResponse(result: any): result is Response {
+  return result instanceof Response;
 }
