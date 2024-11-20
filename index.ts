@@ -1,5 +1,6 @@
 export {
   Controller,
+  Service,
   Get,
   Post,
   Put,
@@ -17,7 +18,7 @@ export {
   Multipart,
 } from "./decorator.js";
 
-export { Headers, Response } from "./types.js";
+export { Headers, Response, PartData, ServiceOptions, OnInit, OnDestroy } from "./types.js";
 
 export {
   getRequestHost,
@@ -29,6 +30,8 @@ export {
 } from "./utils.js";
 
 export { HttpStatus } from "./enums.js";
+
+export { container } from "./dicontainer.js";
 
 import H3App from "./app.js";
 

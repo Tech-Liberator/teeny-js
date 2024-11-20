@@ -8,7 +8,8 @@ import {
 } from "h3";
 import { createServer } from "node:http";
 import { Config, loadConfig } from "./configloader.js";
-import { generateRoutes} from "./configroutes.js"
+import { generateRoutes } from "./configroutes.js";
+import { registerServices } from "./registerservices.js";
 
 export default class H3App {
   private app: App;
@@ -21,8 +22,11 @@ export default class H3App {
 
     this.app.use(this.router);
 
-    // Automatically generate routes based on API files
-    generateRoutes(this.app);
+    // Automatically register services for dependency injection
+    registerServices().then(() => {
+      // Automatically generate routes based on API files
+      generateRoutes(this.app);
+    });
   }
 
   public init = async () => {

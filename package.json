@@ -1,6 +1,6 @@
 {
   "name": "h3-framework",
-  "version": "1.5.7",
+  "version": "1.9.0",
   "main": "dist/index.js",
   "scripts": {
     "build": "npm run clean && tsc",

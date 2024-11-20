@@ -1,7 +1,9 @@
-import { RequestHeaders } from "h3";
+import { MultiPartData, RequestHeaders } from "h3";
 import { HttpStatus } from "./enums.js";
 
 export type Headers = RequestHeaders;
+
+export type PartData = MultiPartData;
 
 export class Response {
     status: HttpStatus;
@@ -20,5 +22,19 @@ export class Response {
       this.message = message;
       this.headers = headers;
     }
+  }
+  
+  export interface ServiceOptions {
+    name?: string;
+    singleton?: boolean;
+    scope?: 'singleton' | 'scoped';
+  }
+
+  export interface OnInit {
+    onInit(): void;
+  }
+  
+  export interface OnDestroy {
+    onDestroy(): void;
   }
   

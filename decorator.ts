@@ -1,8 +1,20 @@
 import "reflect-metadata";
+import { ServiceOptions } from "./types.js";
 
 export function Controller(path: string): ClassDecorator {
   return (target) => {
     Reflect.defineMetadata("path", path, target);
+  };
+}
+
+export function Service(options: ServiceOptions = {}): ClassDecorator {
+  return (target: any) => {
+    const serviceName = options.name || target.name; // Use alias or class name
+    const singleton = options.singleton || false;
+    const scope = options.scope || "singleton";
+    Reflect.defineMetadata("serviceName", serviceName, target);
+    Reflect.defineMetadata("singleton", singleton, target);
+    Reflect.defineMetadata("scope", scope, target);
   };
 }
 
@@ -141,12 +153,12 @@ export function RequestHeaders(): ParameterDecorator {
   };
 }
 
-export function FormData(): ParameterDecorator {
+export function FormData(param: string): ParameterDecorator {
   return (target, propertyKey, parameterIndex) => {
     if (propertyKey !== undefined) {
       Reflect.defineMetadata(
         `param-${parameterIndex}`,
-        { type: "formData" },
+        { type: "formData", param },
         target,
         propertyKey
       );
@@ -154,12 +166,12 @@ export function FormData(): ParameterDecorator {
   };
 }
 
-export function Multipart(): ParameterDecorator {
+export function Multipart(param: string): ParameterDecorator {
   return (target, propertyKey, parameterIndex) => {
     if (propertyKey !== undefined) {
       Reflect.defineMetadata(
         `param-${parameterIndex}`,
-        { type: "multipart" },
+        { type: "multipart", param },
         target,
         propertyKey
       );

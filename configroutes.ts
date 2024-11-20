@@ -1,11 +1,11 @@
 import {
-  assertMethod,
   createRouter,
   defineEventHandler,
   getQuery,
   getRequestHeaders,
   getRouterParam,
   H3Event,
+  MultiPartData,
   readBody,
   readFormData,
   readMultipartFormData,
@@ -20,6 +20,7 @@ import "reflect-metadata";
 import { defaultMessages, isResponse } from "./utils.js";
 import { HttpStatus } from "./enums.js";
 import { Response } from "./types.js";
+import { container } from "./dicontainer.js";
 
 export function generateRoutes(app: any) {
   const router = createRouter();
@@ -45,8 +46,8 @@ export function generateRoutes(app: any) {
       const apiModule = await import(moduleURL); // Use the file URL for dynamic import
 
       // Iterate over exported classes or functions
-      Object.keys(apiModule).forEach((key) => {
-        const apiClass = new apiModule[key]();
+      Object.keys(apiModule).forEach(async (key) => {
+        const apiClass = await injectDependencies(apiModule[key]);
         const proto = Object.getPrototypeOf(apiClass);
 
         // Get the 'path' metadata from the Controller decorator
@@ -77,10 +78,8 @@ export function generateRoutes(app: any) {
                   headers
                 );
                 const result = await method.apply(apiClass, args);
-                console.log("result", result);
                 // Check if the result is already a ResponseEntity, return it directly if true
                 if (isResponse(result)) {
-                  console.log("is a response");
                   const response: Response = result;
                   const headers: Record<string, string> = response.headers;
                   if (headers) {
@@ -91,31 +90,41 @@ export function generateRoutes(app: any) {
                   if (message) {
                     setResponseStatus(event, status, message);
                   } else {
-                    setResponseStatus(
-                      event,
-                      status,
-                      defaultMessages[status]
-                    );
+                    setResponseStatus(event, status, defaultMessages[status]);
                   }
                   return response.body;
                 }
 
                 // Handle empty result or null value (No Content)
-                if (result) {
+                if (Array.isArray(result)) {
+                  if (result.length > 0) {
+                    setResponseStatus(
+                      event,
+                      HttpStatus.OK,
+                      defaultMessages[HttpStatus.OK]
+                    );
+                  } else {
+                    setResponseStatus(
+                      event,
+                      HttpStatus.NO_CONTENT,
+                      defaultMessages[HttpStatus.NO_CONTENT]
+                    );
+                  }
+                  return result;
+                } else if (result) {
                   setResponseStatus(
                     event,
                     HttpStatus.OK,
                     defaultMessages[HttpStatus.OK]
                   );
-                  return result.body;
                 } else {
                   setResponseStatus(
                     event,
                     HttpStatus.NO_CONTENT,
                     defaultMessages[HttpStatus.NO_CONTENT]
                   );
-                  return result.body;
                 }
+                return result;
               } catch (error: any) {
                 setResponseStatus(
                   event,
@@ -188,14 +197,39 @@ async function getMethodArguments(
       const body = await readBody(event);
       params.push(body);
     } else if (metadata.type === "formData") {
-      const formData = await readFormData(event);
-      params.push(formData);
+      const formData: FormData = await readFormData(event);
+      if (formData) {
+        params.push(formData.get(metadata.param));
+      }
     } else if (metadata.type === "multipart") {
-      const multipartDate = await readMultipartFormData(event);
-      params.push(multipartDate);
+      const multipartData: MultiPartData[] | undefined =
+        await readMultipartFormData(event);
+      if (typeof multipartData != "undefined" && multipartData.length > 0) {
+        params.push(
+          multipartData.filter((data) => data.name === metadata.param)[0]
+        );
+      }
     } else if (metadata.type === "headers") {
       params.push(headers);
     }
   }
   return params;
+}
+
+async function injectDependencies(target: any): Promise<any> {
+  const dependencies = Reflect.getMetadata("design:paramtypes", target) || [];
+
+  const resolvedDependencies = await Promise.all(
+    dependencies.map(async (dep: any) => {
+      try {
+        return container.resolve(dep.name);
+      } catch (error) {
+        console.error(`Unable to resolve dependency for target ${dep.name}.`);
+        console.error(error);
+        return null;
+      }
+    })
+  );
+
+  return new target(...resolvedDependencies);
 }
