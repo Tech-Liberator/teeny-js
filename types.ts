@@ -6,35 +6,22 @@ export type Headers = RequestHeaders;
 export type PartData = MultiPartData;
 
 export class Response {
-    status: HttpStatus;
-    body: any;
-    message: string;
-    headers: Record<string, string>;
-  
-    constructor(
-      status: HttpStatus,
-      body: any = null,
-      message: string = "",
-      headers: Record<string, string> = {}
-    ) {
-      this.status = status;
-      this.body = body;
-      this.message = message;
-      this.headers = headers;
-    }
-  }
-  
-  export interface ServiceOptions {
-    name?: string;
-    singleton?: boolean;
-    scope?: 'singleton' | 'scoped';
-  }
+  status: HttpStatus;
+  body: any;
+  message: string;
+  headers: Record<string, string>;
 
-  export interface OnInit {
-    onInit(): void;
+  constructor(
+    status: HttpStatus,
+    body: any = null,
+    message: string = "",
+    headers: Record<string, string> = {}
+  ) {
+    this.status = status;
+    this.body = body;
+    this.message = message;
+    this.headers = headers;
   }
-  
-  export interface OnDestroy {
-    onDestroy(): void;
-  }
-  
+}
+
+export type Constructor<T = any> = new (...args: any[]) => T;

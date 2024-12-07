@@ -1,5 +1,4 @@
 import "reflect-metadata";
-import { ServiceOptions } from "./types.js";
 
 export function Controller(path: string): ClassDecorator {
   return (target) => {
@@ -7,14 +6,10 @@ export function Controller(path: string): ClassDecorator {
   };
 }
 
-export function Service(options: ServiceOptions = {}): ClassDecorator {
+export function Service(): ClassDecorator {
   return (target: any) => {
-    const serviceName = options.name || target.name; // Use alias or class name
-    const singleton = options.singleton || false;
-    const scope = options.scope || "singleton";
+    const serviceName = target.name;
     Reflect.defineMetadata("serviceName", serviceName, target);
-    Reflect.defineMetadata("singleton", singleton, target);
-    Reflect.defineMetadata("scope", scope, target);
   };
 }
 

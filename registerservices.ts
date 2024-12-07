@@ -29,16 +29,9 @@ export async function registerServices(): Promise<void> {
 
         // Check if metadata exists
         const serviceName = Reflect.getMetadata("serviceName", serviceClass);
-        const singleton = Reflect.getMetadata("singleton", serviceClass);
-        const scope = Reflect.getMetadata("scope", serviceClass);
 
         if (serviceName) {
-          container.register(
-            serviceName,
-            serviceClass,
-            singleton,
-            scope
-          );
+          container.register(serviceName, serviceClass);
         }
       });
     } catch (err) {
