@@ -5,6 +5,7 @@ import {
   getRequestHeaders,
   getRouterParam,
   H3Event,
+  handleCors,
   MultiPartData,
   readBody,
   readFormData,
@@ -21,6 +22,7 @@ import { defaultMessages, isResponse } from "./utils.js";
 import { HttpStatus } from "./enums.js";
 import { Response } from "./types.js";
 import { container } from "./dicontainer.js";
+import { configerations } from "./configloader.js";
 
 export function generateRoutes(app: any) {
   const router = createRouter();
@@ -70,34 +72,50 @@ export function generateRoutes(app: any) {
 
             const eventHandler = async (event: H3Event) => {
               try {
-                const headers: RequestHeaders = getRequestHeaders(event);
-                const args = await getMethodArguments(
-                  apiClass,
-                  methodName,
-                  event,
-                  headers
-                );
-                const result = await method.apply(apiClass, args);
-                // Check if the result is already a ResponseEntity, return it directly if true
-                if (isResponse(result)) {
-                  const response: Response = result;
-                  const headers: Record<string, string> = response.headers;
-                  if (headers) {
-                    setResponseHeaders(event, headers);
+                const didHandleCors = handleCors(event, configerations.cors);
+                if (didHandleCors) {
+                  const headers: RequestHeaders = getRequestHeaders(event);
+                  const args = await getMethodArguments(
+                    apiClass,
+                    methodName,
+                    event,
+                    headers
+                  );
+                  const result = await method.apply(apiClass, args);
+                  // Check if the result is already a ResponseEntity, return it directly if true
+                  if (isResponse(result)) {
+                    const response: Response = result;
+                    const headers: Record<string, string> = response.headers;
+                    if (headers) {
+                      setResponseHeaders(event, headers);
+                    }
+                    const status: HttpStatus = response.status;
+                    const message: string = response.message;
+                    if (message) {
+                      setResponseStatus(event, status, message);
+                    } else {
+                      setResponseStatus(event, status, defaultMessages[status]);
+                    }
+                    return response.body;
                   }
-                  const status: HttpStatus = response.status;
-                  const message: string = response.message;
-                  if (message) {
-                    setResponseStatus(event, status, message);
-                  } else {
-                    setResponseStatus(event, status, defaultMessages[status]);
-                  }
-                  return response.body;
-                }
 
-                // Handle empty result or null value (No Content)
-                if (Array.isArray(result)) {
-                  if (result.length > 0) {
+                  // Handle empty result or null value (No Content)
+                  if (Array.isArray(result)) {
+                    if (result.length > 0) {
+                      setResponseStatus(
+                        event,
+                        HttpStatus.OK,
+                        defaultMessages[HttpStatus.OK]
+                      );
+                    } else {
+                      setResponseStatus(
+                        event,
+                        HttpStatus.NO_CONTENT,
+                        defaultMessages[HttpStatus.NO_CONTENT]
+                      );
+                    }
+                    return result;
+                  } else if (result) {
                     setResponseStatus(
                       event,
                       HttpStatus.OK,
@@ -111,20 +129,17 @@ export function generateRoutes(app: any) {
                     );
                   }
                   return result;
-                } else if (result) {
-                  setResponseStatus(
-                    event,
-                    HttpStatus.OK,
-                    defaultMessages[HttpStatus.OK]
-                  );
                 } else {
-                  setResponseStatus(
-                    event,
-                    HttpStatus.NO_CONTENT,
-                    defaultMessages[HttpStatus.NO_CONTENT]
-                  );
+                  // Handle CORS failure - Send a structured response with 403 status
+                  const errorMessage =
+                    "CORS policy violation: Request not allowed";
+                  setResponseStatus(event, HttpStatus.FORBIDDEN, errorMessage);
+                  return {
+                    status: HttpStatus.FORBIDDEN,
+                    message: errorMessage,
+                    body: null,
+                  };
                 }
-                return result;
               } catch (error: any) {
                 setResponseStatus(
                   event,
