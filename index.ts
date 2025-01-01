@@ -33,6 +33,6 @@ export { HttpStatus } from "./enums.js";
 
 export { container } from "./dicontainer.js";
 
-import H3App from "./app.js";
+import ZephyrApp from "./app.js";
 
-export default H3App;
+export default ZephyrApp;

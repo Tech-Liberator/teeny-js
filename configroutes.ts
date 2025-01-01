@@ -1,3 +1,12 @@
+/**
+ * This file contains the code for generating routes for the application based on the exported classes and functions
+ * from the 'controller' directory. The routes are generated using the 'h3' library.
+ * 
+ * @author Sathya Molagoda
+ * @version 1.0.0
+ * @Created on 2024-12-25
+ */
+
 import {
   createRouter,
   defineEventHandler,
@@ -24,6 +33,13 @@ import { Response } from "./types.js";
 import { container } from "./dicontainer.js";
 import { configerations } from "./configloader.js";
 
+
+/**
+ * Generates routes for the application based on the exported classes and functions
+ * from the 'controller' directory.
+ * @param app - The app instance to use for generating routes.
+ * @returns Nothing.
+ */
 export function generateRoutes(app: any) {
   const router = createRouter();
   const apiDirectory = join(process.cwd(), "dist", "src", "controller");
@@ -194,51 +210,83 @@ export function generateRoutes(app: any) {
   app.use(router);
 }
 
+/**
+ * Extracts method arguments based on metadata defined on the method parameters.
+ * Supports extraction from path, query, body, form data, multipart data, and headers.
+ * 
+ * @param target - The target object containing the method.
+ * @param methodName - The name of the method to extract arguments for.
+ * @param event - The H3Event instance containing the request information.
+ * @param headers - The request headers.
+ * @returns A promise that resolves to an array of extracted parameters.
+ */
 async function getMethodArguments(
   target: any,
   methodName: string,
   event: H3Event,
   headers: RequestHeaders
-) {
+): Promise<any[]> {
   const params: any[] = [];
+
+  // Iterate over parameter metadata and extract corresponding values
   for (let i = 0; Reflect.hasMetadata(`param-${i}`, target, methodName); i++) {
     const metadata = Reflect.getMetadata(`param-${i}`, target, methodName);
+
+    // Extract path parameter
     if (metadata.type === "path") {
       params.push(getRouterParam(event, metadata.param));
-    } else if (metadata.type === "query") {
+    } 
+    // Extract query parameter
+    else if (metadata.type === "query") {
       const query = getQuery(event);
       params.push(query[metadata.param]);
-    } else if (metadata.type === "body") {
+    } 
+    // Extract body
+    else if (metadata.type === "body") {
       const body = await readBody(event);
       params.push(body);
-    } else if (metadata.type === "formData") {
+    } 
+    // Extract form data
+    else if (metadata.type === "formData") {
       const formData: FormData = await readFormData(event);
       if (formData) {
         params.push(formData.get(metadata.param));
       }
-    } else if (metadata.type === "multipart") {
-      const multipartData: MultiPartData[] | undefined =
-        await readMultipartFormData(event);
+    } 
+    // Extract multipart data
+    else if (metadata.type === "multipart") {
+      const multipartData: MultiPartData[] | undefined = await readMultipartFormData(event);
       if (typeof multipartData != "undefined" && multipartData.length > 0) {
-        params.push(
-          multipartData.filter((data) => data.name === metadata.param)[0]
-        );
+        params.push(multipartData.filter((data) => data.name === metadata.param)[0]);
       }
-    } else if (metadata.type === "headers") {
+    } 
+    // Extract headers
+    else if (metadata.type === "headers") {
       params.push(headers);
     }
   }
+  
   return params;
 }
 
+/**
+ * Injects dependencies into the target class by resolving them from the DI container.
+ * 
+ * @param target - The target class for which dependencies are to be injected.
+ * @returns A promise that resolves to an instance of the target class with its dependencies injected.
+ */
 async function injectDependencies(target: any): Promise<any> {
+  // Get the list of dependencies using reflection metadata
   const dependencies = Reflect.getMetadata("design:paramtypes", target) || [];
 
+  // Resolve all dependencies from the DI container
   const resolvedDependencies = await Promise.all(
     dependencies.map(async (dep: any) => {
       try {
+        // Attempt to resolve the dependency from the container
         return container.resolve(dep.name);
       } catch (error) {
+        // Log an error if the dependency cannot be resolved
         console.error(`Unable to resolve dependency for target ${dep.name}.`);
         console.error(error);
         return null;
@@ -246,5 +294,6 @@ async function injectDependencies(target: any): Promise<any> {
     })
   );
 
+  // Create and return an instance of the target class with resolved dependencies
   return new target(...resolvedDependencies);
 }

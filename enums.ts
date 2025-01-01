@@ -1,3 +1,14 @@
+/**
+ * This file contains all the enums used in the framework.
+ * 
+ * @author Sathya Molagoda
+ * @version 1.0.0
+ * @created 2024-12-25
+ */
+
+/**
+ * HTTP status codes
+ */
 export enum HttpStatus {
   // Informational responses (100-199)
   CONTINUE = 100,

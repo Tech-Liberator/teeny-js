@@ -1,3 +1,11 @@
+/**
+ * This file contains the code for registering services in the dependency injection container.
+ * 
+ * @author Sathya Molagoda
+ * @version 1.0.0
+ * @Created on 2024-12-25
+ */
+
 import { existsSync, readdirSync } from "fs";
 import { join, extname } from "path";
 import { pathToFileURL } from "url";
