@@ -1,3 +1,11 @@
+/**
+ * This file contains the types used in the framework.
+ * 
+ * @author Sathya Molagoda
+ * @version 1.0.0
+ * @created 2024-12-25
+ */
+
 import { MultiPartData, RequestHeaders } from "h3";
 import { HttpStatus } from "./enums.js";
 

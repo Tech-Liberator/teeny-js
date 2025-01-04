@@ -1,3 +1,10 @@
+/**
+ * This file contains utility functions for the framework.
+ * 
+ * @author Sathya Molagoda
+ * @version 1.0.0
+ * @created 2024-12-25
+ */
 import { HttpStatus } from "./enums.js";
 import { Headers, Response } from "./types.js";
 
