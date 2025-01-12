@@ -1,5 +1,5 @@
 /**
- * Zephyr Framework
+ * Nyx Framework
  * 
  * @author Sathya Molagoda
  * @version 1.0.0
@@ -40,6 +40,6 @@ export { HttpStatus } from "./enums.js";
 
 export { container } from "./dicontainer.js";
 
-import ZephyrApp from "./app.js";
+import NyxApp from "./app.js";
 
-export default ZephyrApp;
+export default NyxApp;

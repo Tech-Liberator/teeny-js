@@ -5,7 +5,7 @@ import { generateRoutes } from "./configroutes.js";
 import { registerServices } from "./registerservices.js";
 
 /**
- * The ZephyrApp class is the main class for the application. It creates an App
+ * The NyxApp class is the main class for the application. It creates an App
  * instance and a Router instance and uses the Router in the App. It also
  * provides methods for setting up the app, starting the server, and listening
  * on a specified port.
@@ -14,12 +14,12 @@ import { registerServices } from "./registerservices.js";
  * @version 1.0.0
  * @Created on 2024-11-15
  */
-export default class ZephyrApp {
+export default class NyxApp {
   private app: App;
   private router: Router;
 
   /**
-   * The constructor for the ZephyrApp class.
+   * The constructor for the NyxApp class.
    * It creates an App instance and a Router instance and uses the Router
    * in the App.
    */
@@ -74,7 +74,7 @@ export default class ZephyrApp {
     // Start the server and listen on the specified port
     this.listen((port?: number) => {
       // Log the port number that the server is listening on
-      console.log(`Zephyr app running on port ${port}`);
+      console.log(`Nyx app running on port ${port}`);
     });
   }
 

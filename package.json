@@ -1,6 +1,6 @@
 {
-  "name": "h3-framework",
-  "version": "2.0.1",
+  "name": "nyxjs",
+  "version": "1.0.0",
   "main": "dist/index.js",
   "scripts": {
     "build": "npm run clean && tsc",
