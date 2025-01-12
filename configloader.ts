@@ -51,7 +51,7 @@ export let configerations: Config = {
  */
 export const loadConfig = async (): Promise<void> => {
   // The path to the configuration file
-  const configPath = path.resolve(process.cwd(), "dist", "Nyx.config.js");
+  const configPath = path.resolve(process.cwd(), "dist", "zephyr.config.js");
 
   // Use dynamic import with file:// URL for Windows compatibility
   const configURL = pathToFileURL(configPath).href;
