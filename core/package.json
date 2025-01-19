@@ -1,6 +1,6 @@
 {
   "name": "zephyrjs",
-  "version": "1.0.0",
+  "version": "1.0.5",
   "main": "dist/index.js",
   "scripts": {
     "build": "npm run clean && tsc",

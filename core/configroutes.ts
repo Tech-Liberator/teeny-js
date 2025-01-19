@@ -8,6 +8,7 @@
  */
 
 import {
+  appendCorsHeaders,
   createRouter,
   defineEventHandler,
   getQuery,
@@ -15,6 +16,7 @@ import {
   getRouterParam,
   H3Event,
   handleCors,
+  isPreflightRequest,
   MultiPartData,
   readBody,
   readFormData,
@@ -37,6 +39,7 @@ import { configerations } from "./configloader.js";
 /**
  * Generates routes for the application based on the exported classes and functions
  * from the 'controller' directory.
+ *
  * @param app - The app instance to use for generating routes.
  * @returns Nothing.
  */
@@ -86,52 +89,51 @@ export function generateRoutes(app: any) {
           if (httpMethod && route) {
             const fullRoute = `${controllerPath}${route}`;
 
+            /**
+             * Handles a single request and returns a response.
+             * @param event - The H3Event instance containing the request information.
+             * @returns A promise that resolves to the response.
+             */
             const eventHandler = async (event: H3Event) => {
               try {
-                const didHandleCors = handleCors(event, configerations.cors);
-                if (didHandleCors) {
-                  const headers: RequestHeaders = getRequestHeaders(event);
-                  const args = await getMethodArguments(
-                    apiClass,
-                    methodName,
-                    event,
-                    headers
-                  );
-                  const result = await method.apply(apiClass, args);
-                  // Check if the result is already a ResponseEntity, return it directly if true
-                  if (isResponse(result)) {
-                    const response: Response = result;
-                    const headers: Record<string, string> = response.headers;
-                    if (headers) {
-                      setResponseHeaders(event, headers);
-                    }
-                    const status: HttpStatus = response.status;
-                    const message: string = response.message;
-                    if (message) {
-                      setResponseStatus(event, status, message);
-                    } else {
-                      setResponseStatus(event, status, defaultMessages[status]);
-                    }
-                    return response.body;
-                  }
+                // Handle CORS using the updated logic
+                const isPreflight = isPreflightRequest(event);
 
-                  // Handle empty result or null value (No Content)
-                  if (Array.isArray(result)) {
-                    if (result.length > 0) {
-                      setResponseStatus(
-                        event,
-                        HttpStatus.OK,
-                        defaultMessages[HttpStatus.OK]
-                      );
-                    } else {
-                      setResponseStatus(
-                        event,
-                        HttpStatus.NO_CONTENT,
-                        defaultMessages[HttpStatus.NO_CONTENT]
-                      );
-                    }
-                    return result;
-                  } else if (result) {
+                if (isPreflight) {
+                  handleCors(event, configerations.cors);
+                  setResponseStatus(event, configerations.cors.preflight?.statusCode || 204);
+                  return;
+                }
+
+                appendCorsHeaders(event, configerations.cors);
+
+                const headers: RequestHeaders = getRequestHeaders(event);
+                const args = await getMethodArguments(
+                  apiClass,
+                  methodName,
+                  event,
+                  headers
+                );
+                const result = await method.apply(apiClass, args);
+
+                if (isResponse(result)) {
+                  const response: Response = result;
+                  const headers: Record<string, string> = response.headers;
+                  if (headers) {
+                    setResponseHeaders(event, headers);
+                  }
+                  const status: HttpStatus = response.status;
+                  const message: string = response.message;
+                  if (message) {
+                    setResponseStatus(event, status, message);
+                  } else {
+                    setResponseStatus(event, status, defaultMessages[status]);
+                  }
+                  return response.body;
+                }
+
+                if (Array.isArray(result)) {
+                  if (result.length > 0) {
                     setResponseStatus(
                       event,
                       HttpStatus.OK,
@@ -145,17 +147,20 @@ export function generateRoutes(app: any) {
                     );
                   }
                   return result;
+                } else if (result) {
+                  setResponseStatus(
+                    event,
+                    HttpStatus.OK,
+                    defaultMessages[HttpStatus.OK]
+                  );
                 } else {
-                  // Handle CORS failure - Send a structured response with 403 status
-                  const errorMessage =
-                    "CORS policy violation: Request not allowed";
-                  setResponseStatus(event, HttpStatus.FORBIDDEN, errorMessage);
-                  return {
-                    status: HttpStatus.FORBIDDEN,
-                    message: errorMessage,
-                    body: null,
-                  };
+                  setResponseStatus(
+                    event,
+                    HttpStatus.NO_CONTENT,
+                    defaultMessages[HttpStatus.NO_CONTENT]
+                  );
                 }
+                return result;
               } catch (error: any) {
                 setResponseStatus(
                   event,
@@ -167,7 +172,6 @@ export function generateRoutes(app: any) {
               }
             };
 
-            // Handle specific HTTP methods explicitly
             switch (httpMethod.toLowerCase()) {
               case "get":
                 router.get(fullRoute, defineEventHandler(eventHandler));

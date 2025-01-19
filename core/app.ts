@@ -74,7 +74,7 @@ export default class NyxApp {
     // Start the server and listen on the specified port
     this.listen((port?: number) => {
       // Log the port number that the server is listening on
-      console.log(`Nyx app running on port ${port}`);
+      console.log(`Zephyr app running on port ${port}`);
     });
   }
 

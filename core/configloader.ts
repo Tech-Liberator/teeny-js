@@ -40,7 +40,7 @@ export let configerations: Config = {
     methods: "*",
     allowHeaders: "*",
     exposeHeaders: "*",
-    credentials: true,
+    credentials: false,
     maxAge: "5",
   },
 };

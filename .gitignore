@@ -36,10 +36,10 @@ bower_components
 .lock-wscript
 
 # Compiled binary addons (https://nodejs.org/api/addons.html)
-build/Release
+core/build/Release
 
 # Dependency directories
-node_modules/
+core/node_modules/
 jspm_packages/
 
 # Snowpack dependency directory (https://snowpack.dev/)
@@ -49,7 +49,10 @@ web_modules/
 *.tsbuildinfo
 
 # Optional npm cache directory
-.npm
+core/.npm
+
+# npm configuratios
+core/.npmrc
 
 # Optional eslint cache
 .eslintcache
@@ -89,7 +92,7 @@ out
 
 # Nuxt.js build / generate output
 .nuxt
-dist
+core/dist
 
 # Gatsby files
 .cache/
