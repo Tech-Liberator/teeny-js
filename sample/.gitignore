@@ -1,0 +1,5 @@
+# Node dependencies
+node_modules
+
+# Zephyr build outputs
+dist

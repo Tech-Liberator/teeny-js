@@ -1,5 +1,35 @@
-# Core project 
+## Core
+# Node dependencies
 core/node_modules
+
+# Zephyr build outputs
 core/dist
-core/.npm
-core/.npmrc
+
+## Docs
+# Nuxt dev/build outputs
+docs/.output
+docs/.data
+docs/.nuxt
+docs/.nitro
+docs/.cache
+docs/dist
+
+# Node dependencies
+docs/node_modules
+
+# Logs
+docs/logs
+docs/*.log
+
+# Misc
+docs/.DS_Store
+docs/.fleet
+docs/.idea
+
+# Local env files
+docs/.env
+docs/.env.*
+docs/!.env.example
+
+# VSC
+docs/.history
