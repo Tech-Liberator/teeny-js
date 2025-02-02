@@ -1,1 +1,53 @@
 @import "tailwindcss";
+
+/* Force override Tailwind classes */
+:root {
+    --color-primary: #7c3aedff;
+    --color-secondary: #a198e880;
+}
+
+/* Force Override Text Colors */
+.text-primary {
+    color: var(--color-primary) !important;
+}
+
+.text-secondary {
+    color: var(--color-secondary) !important;
+}
+
+/* Force Override Background Colors */
+.bg-primary {
+    background-color: var(--color-primary) !important;
+}
+
+.bg-secondary {
+    background-color: var(--color-secondary) !important;
+}
+
+/* Force Override Links */
+a:hover {
+    color: var(--color-primary) !important;
+}
+
+.button-link {
+    background-color: var(--color-primary) !important;
+    color: white !important;
+}
+
+.button-link:hover {
+    background-color: var(--color-secondary) !important;
+    color: white !important;
+}
+
+.router-link-active {
+    color: var(--color-primary) !important;
+}
+
+.router-link-exact-active {
+    color: var(--color-primary) !important;
+}
+
+/* Force Override List Item Markers */
+.list-icon {
+    color: var(--color-primary) !important;
+}
