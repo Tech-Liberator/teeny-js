@@ -2,7 +2,7 @@
 
 /* Force override Tailwind classes */
 :root {
-    --color-primary: #7c3aedff;
+    --color-primary: #7c3aed;
     --color-secondary: #a198e880;
 }
 
