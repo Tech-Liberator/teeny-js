@@ -1,3 +1,6 @@
 [submodule "sample"]
 	path = sample
 	url = https://github.com/Tech-Liberator/zephyr-js-sample
+[submodule "docs"]
+	path = docs
+	url = https://github.com/Tech-Liberator/zephyr-js-docs
