@@ -8,6 +8,9 @@ core/dist
 # Teeny npm
 core/.npmrc
 
+# Teeny package
+core/core/package-lock.json
+
 ## Docs
 # Nuxt dev/build outputs
 docs/.output
