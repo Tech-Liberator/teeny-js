@@ -2,8 +2,11 @@
 # Node dependencies
 core/node_modules
 
-# Zephyr build outputs
+# Teeny build outputs
 core/dist
+
+# Teeny npm
+core/.npmrc
 
 ## Docs
 # Nuxt dev/build outputs

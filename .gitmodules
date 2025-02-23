@@ -1,6 +1,6 @@
 [submodule "sample"]
 	path = sample
-	url = https://github.com/Tech-Liberator/zephyr-js-sample
+	url = https://github.com/Tech-Liberator/Teeny-js-sample
 [submodule "docs"]
 	path = docs
-	url = https://github.com/Tech-Liberator/zephyr-js-docs
+	url = https://github.com/Tech-Liberator/Teeny-js-docs

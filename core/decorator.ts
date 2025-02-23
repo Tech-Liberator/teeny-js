@@ -1,6 +1,6 @@
 /**
  * This file contains the decorators used to define metadata for controllers,
- * services, and methods in a NyxApp application.
+ * services, and methods in a TeenyApp application.
  * 
  * @author Sathya Molagoda
  * @version 1.0.0

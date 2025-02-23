@@ -1,5 +1,5 @@
 /**
- * Nyx Framework
+ * Teeny Framework
  * 
  * @author Sathya Molagoda
  * @version 1.0.0
@@ -40,6 +40,6 @@ export { HttpStatus } from "./enums.js";
 
 export { container } from "./dicontainer.js";
 
-import NyxApp from "./app.js";
+import TeenyApp from "./app.js";
 
-export default NyxApp;
+export default TeenyApp;
