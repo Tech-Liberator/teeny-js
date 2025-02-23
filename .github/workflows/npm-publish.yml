@@ -12,8 +12,6 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: 20
-      - run: npm config set registry https://registry.npmjs.org/
-        working-directory: core
       - run: npm ci
         working-directory: core
       - run: npm test
@@ -24,12 +22,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
-        with:
-          node-version: 20
-          registry-url: https://registry.npmjs.org/
-      - run: npm config set registry https://registry.npmjs.org/
-        working-directory: core
+      - uses: actions/setup-node@v
       - run: npm ci
         working-directory: core
       - run: npm publish
