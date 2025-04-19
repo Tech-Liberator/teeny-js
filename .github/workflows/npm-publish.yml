@@ -26,7 +26,10 @@ jobs:
           registry-url: https://registry.npmjs.org/
       - run: npm ci
         working-directory: core
+      - name: Create .npmrc for publishing
+        run: |
+          echo "//registry.npmjs.org/:_authToken=${NPM_TOKEN}" > ~/.npmrc
+        env:
+          NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
       - run: npm publish --access public
         working-directory: core
-        env:
-          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
