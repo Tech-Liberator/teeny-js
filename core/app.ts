@@ -5,7 +5,7 @@ import { generateRoutes } from "./configroutes.js";
 import { registerServices } from "./registerservices.js";
 
 /**
- * The TeenyApp class is the main class for the application. It creates an App
+ * The H3BootApp class is the main class for the application. It creates an App
  * instance and a Router instance and uses the Router in the App. It also
  * provides methods for setting up the app, starting the server, and listening
  * on a specified port.
@@ -14,12 +14,12 @@ import { registerServices } from "./registerservices.js";
  * @version 1.0.0
  * @Created on 2024-11-15
  */
-export default class TeenyApp {
+export default class H3BootApp {
   private app: App;
   private router: Router;
 
   /**
-   * The constructor for the TeenyApp class.
+   * The constructor for the H3BootApp class.
    * It creates an App instance and a Router instance and uses the Router
    * in the App.
    */
@@ -74,7 +74,7 @@ export default class TeenyApp {
     // Start the server and listen on the specified port
     this.listen((port?: number) => {
       // Log the port number that the server is listening on
-      console.log(`Teeny app running on port ${port}`);
+      console.log(`H3Boot app running on port ${port}`);
     });
   }
 

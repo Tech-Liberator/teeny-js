@@ -1,5 +1,5 @@
 /**
- * Teeny Framework
+ * H3Boot Framework
  * 
  * @author Sathya Molagoda
  * @version 1.0.0
@@ -40,6 +40,6 @@ export { HttpStatus } from "./enums.js";
 
 export { container } from "./dicontainer.js";
 
-import TeenyApp from "./app.js";
+import H3BootApp from "./app.js";
 
-export default TeenyApp;
+export default H3BootApp;

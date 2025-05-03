@@ -2,13 +2,13 @@
 # Node dependencies
 core/node_modules
 
-# Teeny build outputs
+# H3Boot build outputs
 core/dist
 
-# Teeny npm
+# H3Boot npm
 core/.npmrc
 
-# Teeny package
+# H3Boot package
 core/core/package-lock.json
 
 ## Docs

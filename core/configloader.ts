@@ -46,12 +46,12 @@ export let configerations: Config = {
 };
 
 /**
- * Loads the Teeny configuration file.
+ * Loads the H3Boot configuration file.
  * @returns {Promise<void>}
  */
 export const loadConfig = async (): Promise<void> => {
   // The path to the configuration file
-  const configPath = path.resolve(process.cwd(), "dist", "Teeny.config.js");
+  const configPath = path.resolve(process.cwd(), "dist", "h3boot.config.js");
 
   // Use dynamic import with file:// URL for Windows compatibility
   const configURL = pathToFileURL(configPath).href;
